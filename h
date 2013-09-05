@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+require 'json'
+
+path = File.expand_path('~/.heroku-apps.json')
+if File.exists?(path)
+  envs = File.open(path, 'r') { |f| JSON.load(f) }
+else
+  puts '~/.heroku-apps.json must be configured for your environments before '\
+       'using `h`'
+  exit -1
+end
+
+action_key = ARGV.shift
+environment = ARGV.pop
+real_environment = environment ? envs[environment] : nil
+action_args = ARGV
+
+actions = {
+  logs:      'logs -t',
+  console:   'run rails c',
+  bash:      'run bash',
+  hist:      'releases',
+  mon:       'maintenance:on',
+  moff:      'maintenance:off',
+  # Database
+  pg:        'pg:psql',
+  pginfo:    'pg:info',
+  migrate:   'run rake db:migrate',
+  pulltable: 'db:pull --tables',
+  # Processes / Workers
+  scale:     'ps:scale',
+  restart:   'ps:restart',
+  # Addons - Browser
+  add:       'addons:add',
+  remove:    'addons:remove',
+  relic:     'addons:open newrelic',
+  bigwig:    'addons:open rabbitmq-bigwig',
+  rmq:       lambda{r = get_rmq_addon(real_environment); "addons:open #{r}"},
+  redis:     lambda{r = get_redis_addon(real_environment); "addons:open #{r}"},
+  sched:     'addons:open scheduler',
+  postgres:  'addons:open heroku-postgresql',
+  graphite:  'addons:open hostedgraphite',
+  librato:   'addons:open librato',
+  # Backups
+  backups:   'pgbackups',
+  capture:   'pgbackups:capture',
+  grab:      'pgbackups:url',
+  # No mapping, but listed for completeness
+  ps:        'ps',
+  addons:    'addons',
+  config:    'config',
+}
+
+def multiple_addon_handle(type, regex, env)
+  addons = %x[heroku addons --app #{env}].split.grep(regex)
+  case addons.size
+  when 0
+    puts("No #{type} addons found for #{env}")
+  when 1
+    addons.first
+  else
+    addon = addons.first
+    puts("Multiple #{type} addons found:")
+    addons.each{ |a| puts("\t#{a}") }
+    puts("Using '#{addon}'")
+    addon
+  end
+end
+
+def get_redis_addon(env)
+  multiple_addon_handle('Redis', /redis/i, env)
+end
+
+def get_rmq_addon(env)
+  multiple_addon_handle('RMQ', /rabbitmq|amqp/i, env)
+end
+
+if not action_key or action_key =~ /help/i
+  puts "Usage: 'h <action> <environment>'"
+  puts "\nActions:"
+  actions.to_a.each{|pair| puts pair * " => "}
+  puts "\nEnvironments:"
+  envs.to_a.each{|pair| puts pair * " => "}
+end
+
+environmentless_actions = ['status', 'addons:list']
+
+exit if !action_key || (!environment && !environmentless_actions.member?(action_key))
+
+action = actions[action_key.to_sym]
+real_action = case action
+              when String
+                action
+              when Proc
+                action.call
+              when nil
+                action_key
+              end
+
+# DB-specific logic.  If we get much more like this, we'll need to
+# develop a much more scalable approach to this app.
+if action_key == 'pg'
+  db = action_args[0] # Assume the first arg (if any) to pg is a DB color
+  if db and not db =~ /HEROKU/
+    action_args[0] = "HEROKU_POSTGRESQL_#{action_args[0].upcase}"
+  end
+end
+
+# Logs specific logic -- add the '-p' arg
+if action_key == 'logs'
+  worker_spec = action_args[0]
+  action_args.unshift('-p') if worker_spec
+end
+
+action_args = action_args * ' '
+
+app = real_environment ? "--app #{real_environment}" : nil
+command_array = ["heroku", real_action, *action_args, app]
+
+command = command_array * ' '
+puts "Executing '#{command}'..."
+output = system(command)

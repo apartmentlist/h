@@ -10,6 +10,11 @@ Executing 'heroku logs -t  --app heroku-production'...
 ```
 
 ### Installation
+##### From Rubygems
+```bash
+gem install heroku-shortcuts
+```
+
 ##### Building Locally
 ```bash
 gem build heroku-shortcuts.gemspec

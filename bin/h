@@ -42,9 +42,9 @@ actions = {
   graphite:  'addons:open hostedgraphite',
   librato:   'addons:open librato',
   # Backups
-  backups:   'pgbackups',
-  capture:   'pgbackups:capture',
-  grab:      'pgbackups:url',
+  backups:   'pg:backups',
+  capture:   'pg:backups capture',
+  grab:      'pg:backups url',
   # No mapping, but listed for completeness
   ps:        'ps',
   addons:    'addons',

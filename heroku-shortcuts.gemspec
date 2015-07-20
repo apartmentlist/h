@@ -4,9 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "heroku-shortcuts"
-  spec.version       = "0.0.1"
-  spec.authors       = ["Rick Dillon", "Adam Derewecki"]
-  spec.email         = ["rpdillon@apartmentlist.com", "adam@apartmentlist.com"]
+  spec.version       = "0.0.2"
+  spec.authors       = ["Rick Dillon", "Adam Derewecki", "Kristján Pétursson"]
+  spec.email         = [
+    "rpdillon@apartmentlist.com",
+    "adam@apartmentlist.com",
+    "kristjan@apartmentlist.com"
+  ]
   spec.description   = %q{Shortcuts for the Heroku CLI}
   spec.summary       = %q{Shortcuts for the Heroku CLI}
   spec.homepage      = "https://github.com/apartmentlist/h"

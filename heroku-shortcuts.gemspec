@@ -2,15 +2,18 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+AUTHORS = [
+  ["Rick Dillon",        "rpdillon@apartmentlist.com"],
+  ["Adam Derewecki",     "adam@apartmentlist.com"    ],
+  ["Kristján Pétursson", "kristjan@apartmentlist.com"],
+  ["Heidi Galbraith",    "heidi@apartmentlist.com"   ]
+]
+
 Gem::Specification.new do |spec|
   spec.name          = "heroku-shortcuts"
-  spec.version       = "0.0.2"
-  spec.authors       = ["Rick Dillon", "Adam Derewecki", "Kristján Pétursson"]
-  spec.email         = [
-    "rpdillon@apartmentlist.com",
-    "adam@apartmentlist.com",
-    "kristjan@apartmentlist.com"
-  ]
+  spec.version       = "0.0.3"
+  spec.authors       = AUTHORS.map(&:first)
+  spec.email         = AUTHORS.map(&:last)
   spec.description   = %q{Shortcuts for the Heroku CLI}
   spec.summary       = %q{Shortcuts for the Heroku CLI}
   spec.homepage      = "https://github.com/apartmentlist/h"

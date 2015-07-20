@@ -75,6 +75,16 @@ def get_rmq_addon(env)
   multiple_addon_handle('RMQ', /rabbitmq|amqp/i, env)
 end
 
+# Selects a follower
+def follower_database(env)
+  dbs = %x[heroku pg:info --app #{env}]
+    .split("\n")
+    .grep(/=== HEROKU_POSTGRESQL/)
+
+  follower = dbs.detect { |db| db !~ /DATABASE_URL/ }
+  return follower.delete('=') if follower
+end
+
 if not action_key or action_key =~ /help/i
   puts "Usage: 'h <action> <environment>'"
   puts "\nActions:"
@@ -101,9 +111,11 @@ real_action = case action
 # develop a much more scalable approach to this app.
 if action_key == 'pg'
   db = action_args[0] # Assume the first arg (if any) to pg is a DB color
-  if db and not db =~ /HEROKU/
-    action_args[0] = "HEROKU_POSTGRESQL_#{action_args[0].upcase}"
+  db = follower_database(real_environment) unless db
+  if db && db !~ /HEROKU|DATABASE_URL/
+    db = "HEROKU_POSTGRESQL_#{action_args[0].upcase}"
   end
+  action_args[0] = db
 end
 
 # Logs specific logic -- add the '-p' arg

@@ -77,12 +77,9 @@ end
 
 # Selects a follower
 def follower_database(env)
-  dbs = %x[heroku pg:info --app #{env}]
-    .split("\n")
-    .grep(/=== HEROKU_POSTGRESQL/)
-
-  follower = dbs.detect { |db| db !~ /DATABASE_URL/ }
-  return follower.delete('=') if follower
+  db_blocks = %x[heroku pg:info --app #{env}].split('=== ')
+  follower = db_blocks.find { |db| db.include?('Following') && !db.include?('DATABASE_URL') }
+  follower.nil? ? nil : follower.split("\n").first
 end
 
 if not action_key or action_key =~ /help/i

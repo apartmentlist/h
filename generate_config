@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+# Usage: ./generate_config [organization]
+#
+# Fetches all available Heroku apps, optionally for a particular organization,
+# and generates JSON you can put in ~/.heroku-apps.json.
+#
+# It naively takes the first letter of every segment of your app name, eg:
+#   apps-are-cool -> aac
+# It does nothing to notice collisions.
+
+require 'json'
+
+org = ARGV[0]
+
+args = "--org #{org}" if org
+apps = `heroku apps #{args}`.split("\n")
+
+names = apps
+  .map {|app| app.split(' ').first}
+  .select{ |app| app && app !~ /^=/ && !app.empty? }
+shortcuts = names.map {|app| app.split('-').map {|word| word[0]}.join}
+config = Hash[shortcuts.zip(names)]
+
+puts JSON.pretty_generate(config)

@@ -44,7 +44,7 @@ actions = {
   # Backups
   backups:   'pg:backups',
   capture:   'pg:backups capture',
-  grab:      'pg:backups url',
+  grab:      'pg:backups public-url',
   # No mapping, but listed for completeness
   ps:        'ps',
   addons:    'addons',

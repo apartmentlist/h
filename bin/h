@@ -7,7 +7,7 @@ if File.exists?(path)
 else
   puts '~/.heroku-apps.json must be configured for your environments before '\
        'using `h`'
-  exit -1
+  exit(-1)
 end
 
 action_key = ARGV.shift
@@ -128,4 +128,4 @@ command_array = ["heroku", real_action, *action_args, app]
 
 command = command_array * ' '
 puts "Executing '#{command}'..."
-output = system(command)
+exec(command)

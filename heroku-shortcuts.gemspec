@@ -11,7 +11,7 @@ AUTHORS = [
 
 Gem::Specification.new do |spec|
   spec.name          = "heroku-shortcuts"
-  spec.version       = "0.0.3"
+  spec.version       = "0.0.4"
   spec.authors       = AUTHORS.map(&:first)
   spec.email         = AUTHORS.map(&:last)
   spec.description   = %q{Shortcuts for the Heroku CLI}

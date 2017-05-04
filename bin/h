@@ -7,12 +7,12 @@ if File.exists?(path)
 else
   puts '~/.heroku-apps.json must be configured for your environments before '\
        'using `h`'
-  exit(-1)
+  exit(1)
 end
 
 action_key = ARGV.shift
 environment = ARGV.pop
-real_environment = environment ? envs[environment] : nil
+real_environment = environment ? envs[environment] || environment : nil
 action_args = ARGV
 
 actions = {

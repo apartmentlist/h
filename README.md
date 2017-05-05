@@ -18,7 +18,7 @@ gem install heroku-shortcuts
 ##### Building Locally
 ```bash
 gem build heroku-shortcuts.gemspec
-gem install heroku-shortcuts-0.0.1.gem
+gem install heroku-shortcuts-0.0.4.gem
 ```
 
 ##### Configure Application Shortnames

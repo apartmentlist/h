@@ -25,8 +25,8 @@ gem install heroku-shortcuts-0.0.1.gem
 Create `~/.heroku-apps.json` as a hash of short name => full name:
 ```json
 {
-  'hp': 'heroku-production',
-  'hs': 'heroku-staging'
+  "hp": "heroku-production",
+  "hs": "heroku-staging"
 }
 ```
 
